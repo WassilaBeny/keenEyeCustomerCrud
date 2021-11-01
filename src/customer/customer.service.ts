@@ -32,8 +32,15 @@ export class CustomerService {
       .exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} customer`;
+  async findOne(id: string) {
+    this.checkIdValidity(id)
+    const userId = this.getMongoId(id);
+
+    const customer = await this.customerModel.findById({ '_id': userId });
+    if (!customer) {
+      throw new NotFoundException(`Customer with id : ${id} is not found`)
+    }
+    return customer
   }
 
   async update(id: string, updateCustomerDto: UpdateCustomerDto): Promise<Customer> {
