@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { Customer, CustomerDocument } from './entities/customer.entity';
+const mongoose = require("mongoose");
 
 @Injectable()
 export class CustomerService {
@@ -35,11 +36,31 @@ export class CustomerService {
     return `This action returns a #${id} customer`;
   }
 
-  update(id: number, updateCustomerDto: UpdateCustomerDto) {
-    return `This action updates a #${id} customer`;
+  async update(id: string, updateCustomerDto: UpdateCustomerDto): Promise<Customer> {
+    this.checkIdValidity(id)
+    const userId = this.getMongoId(id);
+    const customer = await this.customerModel
+      .findByIdAndUpdate({ _id: userId }, updateCustomerDto)
+      .setOptions({ new: true })
+
+    if (!customer) {
+      throw new NotFoundException(`Customer with id : ${id} is not found`)
+    }
+    return customer;
   }
 
   remove(id: number) {
     return `This action removes a #${id} customer`;
+  }
+
+  checkIdValidity = (id: string) => {
+    const isIdValid = mongoose.Types.ObjectId.isValid(id);
+    if (!isIdValid) {
+      throw new BadRequestException(`Invalid mongoID`);
+    }
+  }
+
+  getMongoId = (id: string) => {
+    return mongoose.Types.ObjectId(id);
   }
 }
