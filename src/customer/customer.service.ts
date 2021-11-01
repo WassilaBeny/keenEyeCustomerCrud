@@ -11,8 +11,9 @@ export class CustomerService {
     @InjectModel(Customer.name) private customerModel: Model<CustomerDocument>
   ) { }
 
-  create(createCustomerDto: CreateCustomerDto) {
-    return `This action creates a customer`;
+  create(createCustomerDto: CreateCustomerDto): Promise<Customer> {
+    const createdCustomer = new this.customerModel(createCustomerDto);
+    return createdCustomer.save();
   }
 
   findAll() {
