@@ -49,8 +49,10 @@ export class CustomerService {
     return customer;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} customer`;
+  delete(id: string) {
+    this.checkIdValidity(id)
+    const userId = this.getMongoId(id);
+    return this.customerModel.deleteOne({ _id: userId });
   }
 
   checkIdValidity = (id: string) => {
