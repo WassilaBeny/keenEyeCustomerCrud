@@ -2,7 +2,9 @@
 Add variables to your .env taking example from .env-exp 
 
 # install dependancies
+```bash
 npm i
+```
 
 # Start docker-compose
 ```bash
@@ -26,4 +28,11 @@ docker-compose up -d
 });
 ```
 # Start application
+```bash
 nest start dev 
+```
+
+# Run tests
+```bash
+npm run test 
+```
