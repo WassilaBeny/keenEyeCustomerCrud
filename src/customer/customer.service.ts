@@ -16,8 +16,19 @@ export class CustomerService {
     return createdCustomer.save();
   }
 
-  findAll() {
-    return `This action returns all customer`;
+  findAll(
+    name: string,
+    page: number,
+    limit: number,
+    sort,
+  ): Promise<Customer[]> {
+    const skip = (page - 1) * limit;
+    return this.customerModel
+      .find(name ? { name } : {})
+      .sort(sort)
+      .limit(limit)
+      .skip(skip)
+      .exec();
   }
 
   findOne(id: number) {
